@@ -33,5 +33,17 @@ public interface IMaxBotApi
     /// </summary>
     /// <value>The users API interface.</value>
     IUsersApi Users { get; }
+
+    /// <summary>
+    /// Gets the file-related API methods.
+    /// </summary>
+    /// <value>The files API interface.</value>
+    IFilesApi Files { get; }
+
+    /// <summary>
+    /// Gets the subscriptions/updates-related API methods.
+    /// </summary>
+    /// <value>The subscriptions API interface.</value>
+    ISubscriptionsApi Subscriptions { get; }
 }
 

@@ -230,29 +230,51 @@ Max.Bot.Tests (Тесты)
 ### ФАЗА 6: Все остальные API методы
 
 **Задачи:**
-- [ ] 6.1. Расширить `MessagesApi`:
-  - `EditMessageAsync()` - редактирование сообщения
-  - `DeleteMessageAsync()` - удаление сообщения
-  - `ForwardMessageAsync()` - пересылка сообщения
-  - `SendPhotoAsync()` - отправка фото
-  - `SendDocumentAsync()` - отправка документа
-  - И другие методы работы с сообщениями
-- [ ] 6.2. Расширить `ChatsApi`:
-  - `CreateChatAsync()` - создание чата
-  - `UpdateChatAsync()` - обновление чата
-  - `InviteUserAsync()` - приглашение пользователя
-  - `LeaveChatAsync()` - выход из чата
-  - И другие методы работы с чатами
-- [ ] 6.3. Реализовать `FilesApi`:
-  - `UploadFileAsync()` - загрузка файла
-  - `GetFileAsync()` - получение файла
-  - `DownloadFileAsync()` - скачивание файла
-- [ ] 6.4. Реализовать все остальные группы методов из документации:
-  - Все методы, описанные в API документации
-- [ ] 6.5. Написать тесты для каждого нового метода:
-  - Unit тесты
-  - Тесты интеграции (с моками или реальным API)
-  - Тесты edge cases
+- [x] 6.1. Расширить `MessagesApi`:
+  - [x] `EditMessageAsync()` - редактирование сообщения
+  - [x] `DeleteMessageAsync()` - удаление сообщения
+  - [x] `ForwardMessageAsync()` - пересылка сообщения
+  - [x] `SendMessageWithAttachmentAsync()` - отправка сообщения с вложением (универсальный метод для фото, документов и т.д.)
+  - [x] `ReplyToMessageAsync()` - ответ на сообщение
+  - [x] `GetMessageAsync()` - получение сообщения
+  - [x] `GetVideoAsync()` - получение информации о видео
+  - [x] `AnswerCallbackQueryAsync()` - ответ на callback query
+  - [x] Расширенный `SendMessageAsync()` с поддержкой всех параметров (attachments, link, format, notify, user_id, disable_link_preview)
+- [x] 6.2. Расширить `ChatsApi`:
+  - [x] `UpdateChatAsync()` - обновление чата
+  - [x] `DeleteChatAsync()` - удаление чата
+  - [x] `GetChatByLinkAsync()` - получение чата по ссылке
+  - [x] `SendChatActionAsync()` - отправка действия в чат
+  - [x] `GetPinnedMessageAsync()` - получение закрепленного сообщения
+  - [x] `PinMessageAsync()` - закрепление сообщения
+  - [x] `UnpinMessageAsync()` - открепление сообщения
+  - [x] `GetChatMembershipAsync()` - получение информации о членстве
+  - [x] `LeaveChatAsync()` - выход из чата
+  - [x] `GetChatAdminsAsync()` - получение администраторов
+  - [x] `AddChatAdminAsync()` - назначение администратора
+  - [x] `RemoveChatAdminAsync()` - снятие прав администратора
+  - [x] `GetChatMembersAsync()` - получение участников
+  - [x] `AddChatMembersAsync()` - добавление участников
+  - [x] `RemoveChatMemberAsync()` - удаление участника
+  - [x] `CreateChatAsync()` - проверено: метод отсутствует в API документации
+- [x] 6.3. Реализовать `FilesApi`:
+  - [x] `UploadFileAsync()` - получение URL для загрузки файла
+  - [x] `UploadFileDataAsync()` - фактическая загрузка файла (multipart/form-data)
+  - [x] `UploadFileResumableAsync()` - загрузка файла частями
+  - [x] `GetFileAsync()` - проверено: метод отсутствует в API (файлы загружаются на внешний CDN vu.mycdn.me, после загрузки возвращается token для использования в сообщениях)
+  - [x] `DownloadFileAsync()` - проверено: метод отсутствует в API (файлы хранятся на внешнем CDN, API Max Messenger не предоставляет методы для получения или скачивания уже загруженных файлов)
+- [x] 6.4. Реализовать все остальные группы методов из документации:
+  - [x] `SubscriptionsApi` - все методы работы с подписками и webhook
+  - [x] `UsersApi` - методы работы с пользователями
+  - [x] `BotApi` - методы работы с ботом
+    - [x] `GetMeAsync()` - получение информации о текущем боте (GET /me)
+    - [x] `GetBotInfoAsync()` - получение детальной информации о боте (GET /bot/info) - примечание: метод не документирован в HTML-документации, но реализован в коде
+- [x] 6.5. Написать тесты для каждого нового метода:
+  - [x] Unit тесты для новых типов данных (AttachmentRequest, NewMessageLink)
+  - [x] Unit тесты для расширенного SendMessageAsync
+  - [x] Unit тесты для вспомогательных методов (SendMessageWithAttachmentAsync, ForwardMessageAsync, ReplyToMessageAsync)
+  - [x] Unit тесты валидации для методов загрузки файлов
+  - [x] Тесты edge cases и валидации параметров
 
 **Результат:** Полная реализация всех методов API из документации
 

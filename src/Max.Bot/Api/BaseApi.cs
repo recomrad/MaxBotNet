@@ -103,9 +103,23 @@ internal abstract class BaseApi
         MaxApiRequest request,
         CancellationToken cancellationToken = default)
     {
-        var response = await HttpClient.SendAsync<Response<T>>(request, cancellationToken).ConfigureAwait(false);
+        // Special case: if T is Response, deserialize directly without Response<T> wrapper
+        if (typeof(T) == typeof(Response) || typeof(T).IsAssignableFrom(typeof(Response)))
+        {
+            var simpleResponse = await HttpClient.SendAsync<Response>(request, cancellationToken).ConfigureAwait(false);
+            if (simpleResponse == null)
+            {
+                throw new MaxApiException(
+                    "API request returned null response.",
+                    null,
+                    HttpStatusCode.BadRequest);
+            }
+            return (T)(object)simpleResponse;
+        }
 
-        if (!response.Ok || response.Result == null)
+        var wrappedResponse = await HttpClient.SendAsync<Response<T>>(request, cancellationToken).ConfigureAwait(false);
+
+        if (!wrappedResponse.Ok || wrappedResponse.Result == null)
         {
             throw new MaxApiException(
                 "API request failed. The response indicates an error or contains no data.",
@@ -113,7 +127,7 @@ internal abstract class BaseApi
                 HttpStatusCode.BadRequest);
         }
 
-        return response.Result;
+        return wrappedResponse.Result;
     }
 
     /// <summary>

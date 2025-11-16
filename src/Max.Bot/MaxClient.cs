@@ -32,6 +32,12 @@ public class MaxClient : IMaxBotApi
     /// <inheritdoc />
     public IUsersApi Users { get; }
 
+    /// <inheritdoc />
+    public IFilesApi Files { get; }
+
+    /// <inheritdoc />
+    public ISubscriptionsApi Subscriptions { get; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MaxClient"/> class with a bot token.
     /// </summary>
@@ -89,6 +95,8 @@ public class MaxClient : IMaxBotApi
         Messages = new MessagesApi(_httpClient, _options);
         Chats = new ChatsApi(_httpClient, _options);
         Users = new UsersApi(_httpClient, _options);
+        Files = new FilesApi(_httpClient, _options);
+        Subscriptions = new SubscriptionsApi(_httpClient, _options);
     }
 }
 

@@ -1,12 +1,14 @@
 // 📁 [MessagesApi] - Реализация методов работы с сообщениями
-// 🎯 Core function: Реализация методов IMessagesApi (SendMessageAsync, GetMessagesAsync)
-// 🔗 Key dependencies: Max.Bot.Api, Max.Bot.Configuration, Max.Bot.Networking, Max.Bot.Types
+// 🎯 Core function: Реализация методов IMessagesApi (SendMessageAsync, GetMessagesAsync, EditMessageAsync, DeleteMessageAsync, GetMessageAsync, GetVideoAsync, AnswerCallbackQueryAsync)
+// 🔗 Key dependencies: Max.Bot.Api, Max.Bot.Configuration, Max.Bot.Networking, Max.Bot.Types, Max.Bot.Types.Requests
 // 💡 Usage: Используется в MaxClient для предоставления методов работы с сообщениями
 
 using System.Net.Http;
 using Max.Bot.Configuration;
 using Max.Bot.Networking;
 using Max.Bot.Types;
+using Max.Bot.Types.Enums;
+using Max.Bot.Types.Requests;
 
 namespace Max.Bot.Api;
 
@@ -43,6 +45,53 @@ internal class MessagesApi : BaseApi, IMessagesApi
     }
 
     /// <inheritdoc />
+    public async Task<Message> SendMessageAsync(SendMessageRequest request, long? chatId = null, long? userId = null, bool? disableLinkPreview = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        // Validate that exactly one of chatId or userId is provided
+        if (chatId.HasValue && userId.HasValue)
+        {
+            throw new ArgumentException("Cannot specify both chatId and userId. Provide either chatId or userId, but not both.");
+        }
+
+        if (!chatId.HasValue && !userId.HasValue)
+        {
+            throw new ArgumentException("Either chatId or userId must be provided.");
+        }
+
+        if (chatId.HasValue)
+        {
+            ValidateChatId(chatId.Value);
+        }
+
+        if (userId.HasValue)
+        {
+            ValidateUserId(userId.Value);
+        }
+
+        // Build query parameters
+        var queryParams = new Dictionary<string, string?>();
+        if (chatId.HasValue)
+        {
+            queryParams["chat_id"] = chatId.Value.ToString();
+        }
+
+        if (userId.HasValue)
+        {
+            queryParams["user_id"] = userId.Value.ToString();
+        }
+
+        if (disableLinkPreview.HasValue)
+        {
+            queryParams["disable_link_preview"] = disableLinkPreview.Value.ToString().ToLowerInvariant();
+        }
+
+        var apiRequest = CreateRequest(HttpMethod.Post, "/messages", request, queryParams);
+        return await ExecuteRequestAsync<Message>(apiRequest, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async Task<Message[]> GetMessagesAsync(long chatId, CancellationToken cancellationToken = default)
     {
         ValidateChatId(chatId);
@@ -54,6 +103,227 @@ internal class MessagesApi : BaseApi, IMessagesApi
 
         var request = CreateRequest(HttpMethod.Get, "/messages", null, queryParams);
         return await ExecuteRequestAsync<Message[]>(request, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<Response> EditMessageAsync(string messageId, EditMessageRequest request, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(messageId))
+        {
+            throw new ArgumentException("Message ID cannot be null or empty.", nameof(messageId));
+        }
+
+        ArgumentNullException.ThrowIfNull(request);
+
+        var queryParams = new Dictionary<string, string?>
+        {
+            { "message_id", messageId }
+        };
+
+        var apiRequest = CreateRequest(HttpMethod.Put, "/messages", request, queryParams);
+        return await ExecuteRequestAsync<Response>(apiRequest, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<Response> DeleteMessageAsync(string messageId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(messageId))
+        {
+            throw new ArgumentException("Message ID cannot be null or empty.", nameof(messageId));
+        }
+
+        var queryParams = new Dictionary<string, string?>
+        {
+            { "message_id", messageId }
+        };
+
+        var request = CreateRequest(HttpMethod.Delete, "/messages", null, queryParams);
+        return await ExecuteRequestAsync<Response>(request, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<Message> GetMessageAsync(string messageId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(messageId))
+        {
+            throw new ArgumentException("Message ID cannot be null or empty.", nameof(messageId));
+        }
+
+        var request = CreateRequest(HttpMethod.Get, $"/messages/{Uri.EscapeDataString(messageId)}", null);
+        return await ExecuteRequestAsync<Message>(request, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<Video> GetVideoAsync(string videoToken, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(videoToken))
+        {
+            throw new ArgumentException("Video token cannot be null or empty.", nameof(videoToken));
+        }
+
+        var request = CreateRequest(HttpMethod.Get, $"/videos/{Uri.EscapeDataString(videoToken)}", null);
+        return await ExecuteRequestAsync<Video>(request, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<Response> AnswerCallbackQueryAsync(string callbackQueryId, AnswerCallbackQueryRequest request, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(callbackQueryId))
+        {
+            throw new ArgumentException("Callback query ID cannot be null or empty.", nameof(callbackQueryId));
+        }
+
+        ArgumentNullException.ThrowIfNull(request);
+
+        var queryParams = new Dictionary<string, string?>
+        {
+            { "callback_query_id", callbackQueryId }
+        };
+
+        var apiRequest = CreateRequest(HttpMethod.Post, "/answers", request, queryParams);
+        return await ExecuteRequestAsync<Response>(apiRequest, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Sends a message with an attachment to the specified chat or user.
+    /// </summary>
+    /// <param name="chatId">The unique identifier of the chat. Optional if userId is provided.</param>
+    /// <param name="userId">The unique identifier of the user. Optional if chatId is provided.</param>
+    /// <param name="text">The text of the message. Can be null if only attachment is sent.</param>
+    /// <param name="attachment">The attachment to include in the message.</param>
+    /// <param name="disableLinkPreview">If true, link previews will be disabled for links in the message text.</param>
+    /// <param name="notify">If false, participants will not be notified. Default is true.</param>
+    /// <param name="format">The text format (markdown or html).</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the sent message.</returns>
+    /// <exception cref="ArgumentException">Thrown when both chatId and userId are provided, or neither is provided, or when chatId/userId is less than or equal to zero.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when attachment is null.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxApiException">Thrown when the API returns an error response.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxNetworkException">Thrown when a network error occurs.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxUnauthorizedException">Thrown when authentication fails.</exception>
+    public async Task<Message> SendMessageWithAttachmentAsync(
+        AttachmentRequest attachment,
+        long? chatId = null,
+        long? userId = null,
+        string? text = null,
+        bool? disableLinkPreview = null,
+        bool? notify = null,
+        TextFormat? format = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(attachment);
+
+        var request = new SendMessageRequest
+        {
+            Text = text,
+            Attachments = new[] { attachment },
+            Notify = notify,
+            Format = format
+        };
+
+        return await SendMessageAsync(request, chatId, userId, disableLinkPreview, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Forwards a message to the specified chat or user.
+    /// </summary>
+    /// <param name="messageId">The unique identifier of the message to forward.</param>
+    /// <param name="messageChatId">The unique identifier of the chat containing the message to forward. Optional.</param>
+    /// <param name="chatId">The unique identifier of the destination chat. Optional if userId is provided.</param>
+    /// <param name="userId">The unique identifier of the destination user. Optional if chatId is provided.</param>
+    /// <param name="text">Additional text to include with the forwarded message. Optional.</param>
+    /// <param name="disableLinkPreview">If true, link previews will be disabled for links in the message text.</param>
+    /// <param name="notify">If false, participants will not be notified. Default is true.</param>
+    /// <param name="format">The text format (markdown or html).</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the sent message.</returns>
+    /// <exception cref="ArgumentException">Thrown when messageId is less than or equal to zero, both chatId and userId are provided, or neither is provided, or when chatId/userId is less than or equal to zero.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxApiException">Thrown when the API returns an error response.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxNetworkException">Thrown when a network error occurs.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxUnauthorizedException">Thrown when authentication fails.</exception>
+    public async Task<Message> ForwardMessageAsync(
+        long messageId,
+        long? messageChatId = null,
+        long? chatId = null,
+        long? userId = null,
+        string? text = null,
+        bool? disableLinkPreview = null,
+        bool? notify = null,
+        TextFormat? format = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (messageId <= 0)
+        {
+            throw new ArgumentException("Message ID must be greater than zero.", nameof(messageId));
+        }
+
+        var link = new NewMessageLink
+        {
+            Id = messageId,
+            ChatId = messageChatId
+        };
+
+        var request = new SendMessageRequest
+        {
+            Text = text,
+            Link = link,
+            Notify = notify,
+            Format = format
+        };
+
+        return await SendMessageAsync(request, chatId, userId, disableLinkPreview, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Replies to a message in the specified chat.
+    /// </summary>
+    /// <param name="messageId">The unique identifier of the message to reply to.</param>
+    /// <param name="messageChatId">The unique identifier of the chat containing the message to reply to. Optional.</param>
+    /// <param name="chatId">The unique identifier of the chat. Optional if userId is provided.</param>
+    /// <param name="userId">The unique identifier of the user. Optional if chatId is provided.</param>
+    /// <param name="text">The text of the reply message.</param>
+    /// <param name="disableLinkPreview">If true, link previews will be disabled for links in the message text.</param>
+    /// <param name="notify">If false, participants will not be notified. Default is true.</param>
+    /// <param name="format">The text format (markdown or html).</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the sent message.</returns>
+    /// <exception cref="ArgumentException">Thrown when messageId is less than or equal to zero, text is null or empty, both chatId and userId are provided, or neither is provided, or when chatId/userId is less than or equal to zero.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxApiException">Thrown when the API returns an error response.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxNetworkException">Thrown when a network error occurs.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxUnauthorizedException">Thrown when authentication fails.</exception>
+    public async Task<Message> ReplyToMessageAsync(
+        long messageId,
+        string text,
+        long? messageChatId = null,
+        long? chatId = null,
+        long? userId = null,
+        bool? disableLinkPreview = null,
+        bool? notify = null,
+        TextFormat? format = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (messageId <= 0)
+        {
+            throw new ArgumentException("Message ID must be greater than zero.", nameof(messageId));
+        }
+
+        ValidateNotEmpty(text, nameof(text));
+
+        var link = new NewMessageLink
+        {
+            Id = messageId,
+            ChatId = messageChatId
+        };
+
+        var request = new SendMessageRequest
+        {
+            Text = text,
+            Link = link,
+            Notify = notify,
+            Format = format
+        };
+
+        return await SendMessageAsync(request, chatId, userId, disableLinkPreview, cancellationToken).ConfigureAwait(false);
     }
 }
 
