@@ -58,7 +58,7 @@ public class MaxBotClientOptions
             throw new ArgumentException("BaseUrl cannot be null or empty.", nameof(BaseUrl));
         }
 
-        if (!Uri.TryCreate(BaseUrl, UriKind.Absolute, out var uri) || !uri.IsAbsoluteUri)
+        if (!Uri.TryCreate(BaseUrl, UriKind.Absolute, out var uri) || !uri.IsAbsoluteUri || string.IsNullOrEmpty(uri.Scheme))
         {
             throw new ArgumentException("BaseUrl must be a valid absolute URI.", nameof(BaseUrl));
         }

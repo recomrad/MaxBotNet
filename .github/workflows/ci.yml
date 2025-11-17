@@ -73,9 +73,10 @@ jobs:
       - name: Find coverage reports
         id: find_coverage
         if: always()
+        shell: bash
         run: |
           echo "Checking for coverage files..."
-          if compgen -G "tests/**/TestResults/Coverage/coverage.cobertura.xml" > /dev/null 2>&1 || find tests -name "coverage.cobertura.xml" -path "*/TestResults/Coverage/*" 2>/dev/null | head -1 | grep -q .; then
+          if find tests -name "coverage.cobertura.xml" -path "*/TestResults/Coverage/*" 2>/dev/null | head -1 | grep -q .; then
             echo "coverage_found=true" >> $GITHUB_OUTPUT
           else
             echo "coverage_found=false" >> $GITHUB_OUTPUT
