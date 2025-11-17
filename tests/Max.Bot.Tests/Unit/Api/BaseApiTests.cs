@@ -175,7 +175,7 @@ public class BaseApiTests
         // Assert
         act.Should().Throw<TargetInvocationException>()
             .WithInnerException<ArgumentException>()
-            .WithParameterName("endpoint");
+            .WithParameterName("path");
     }
 
     [Fact]
