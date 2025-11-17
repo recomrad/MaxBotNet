@@ -34,7 +34,7 @@ internal class SubscriptionsApi : BaseApi, ISubscriptionsApi
         var responseBody = await HttpClient.SendAsyncRaw(
             CreateRequest(HttpMethod.Get, "/subscriptions", null),
             cancellationToken).ConfigureAwait(false);
-        
+
         if (string.IsNullOrWhiteSpace(responseBody))
         {
             throw new Exceptions.MaxApiException(
@@ -42,7 +42,7 @@ internal class SubscriptionsApi : BaseApi, ISubscriptionsApi
                 null,
                 System.Net.HttpStatusCode.BadRequest);
         }
-        
+
         var response = MaxJsonSerializer.Deserialize<SubscriptionsResponse>(responseBody);
 
         if (response == null || response.Subscriptions == null)
