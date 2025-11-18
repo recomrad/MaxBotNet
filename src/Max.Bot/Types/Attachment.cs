@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using Max.Bot.Types.Enums;
 
 namespace Max.Bot.Types;
 
@@ -14,9 +13,9 @@ public abstract class Attachment
     /// <summary>
     /// Gets or sets the type of the attachment.
     /// </summary>
-    /// <value>The type of the attachment (text, image, or file).</value>
+    /// <value>The type of the attachment (text, image, file, inline_keyboard, etc.).</value>
     [JsonPropertyName("type")]
-    public MessageType Type { get; set; }
+    public string Type { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -34,10 +33,7 @@ public class PhotoAttachment : Attachment
     /// <summary>
     /// Initializes a new instance of the <see cref="PhotoAttachment"/> class.
     /// </summary>
-    public PhotoAttachment()
-    {
-        Type = MessageType.Image;
-    }
+    public PhotoAttachment() => Type = AttachmentTypeNames.Image;
 }
 
 /// <summary>
@@ -55,10 +51,7 @@ public class VideoAttachment : Attachment
     /// <summary>
     /// Initializes a new instance of the <see cref="VideoAttachment"/> class.
     /// </summary>
-    public VideoAttachment()
-    {
-        Type = MessageType.File;
-    }
+    public VideoAttachment() => Type = AttachmentTypeNames.File;
 }
 
 /// <summary>
@@ -76,10 +69,7 @@ public class AudioAttachment : Attachment
     /// <summary>
     /// Initializes a new instance of the <see cref="AudioAttachment"/> class.
     /// </summary>
-    public AudioAttachment()
-    {
-        Type = MessageType.File;
-    }
+    public AudioAttachment() => Type = AttachmentTypeNames.File;
 }
 
 /// <summary>
@@ -97,9 +87,38 @@ public class DocumentAttachment : Attachment
     /// <summary>
     /// Initializes a new instance of the <see cref="DocumentAttachment"/> class.
     /// </summary>
-    public DocumentAttachment()
-    {
-        Type = MessageType.File;
-    }
+    public DocumentAttachment() => Type = AttachmentTypeNames.File;
+}
+
+/// <summary>
+/// Represents an inline keyboard attachment.
+/// </summary>
+public class InlineKeyboardAttachment : Attachment
+{
+    /// <summary>
+    /// Gets or sets the callback ID for this keyboard attachment.
+    /// </summary>
+    /// <value>The callback ID, or null if not available.</value>
+    [JsonPropertyName("callback_id")]
+    public string? CallbackId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the payload containing the keyboard buttons.
+    /// </summary>
+    /// <value>The payload containing buttons, or null if not available.</value>
+    [JsonPropertyName("payload")]
+    public Dictionary<string, object>? Payload { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InlineKeyboardAttachment"/> class.
+    /// </summary>
+    public InlineKeyboardAttachment() => Type = AttachmentTypeNames.InlineKeyboard;
+}
+
+internal static class AttachmentTypeNames
+{
+    public const string Image = "image";
+    public const string File = "file";
+    public const string InlineKeyboard = "inline_keyboard";
 }
 

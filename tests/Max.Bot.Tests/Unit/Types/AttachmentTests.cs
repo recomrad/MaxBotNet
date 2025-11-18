@@ -1,7 +1,7 @@
+using System.Text.Json;
 using FluentAssertions;
 using Max.Bot.Networking;
 using Max.Bot.Types;
-using Max.Bot.Types.Enums;
 using Xunit;
 
 namespace Max.Bot.Tests.Unit.Types;
@@ -20,7 +20,7 @@ public class AttachmentTests
         // Assert
         attachment.Should().NotBeNull();
         attachment.Should().BeOfType<PhotoAttachment>();
-        attachment.Type.Should().Be(MessageType.Image);
+        attachment.Type.Should().Be("image");
         var photoAttachment = (PhotoAttachment)attachment;
         photoAttachment.Photo.Should().NotBeNull();
         photoAttachment.Photo.Id.Should().Be(123);
@@ -41,7 +41,7 @@ public class AttachmentTests
         // Assert
         attachment.Should().NotBeNull();
         attachment.Should().BeOfType<VideoAttachment>();
-        attachment.Type.Should().Be(MessageType.File);
+        attachment.Type.Should().Be("file");
         var videoAttachment = (VideoAttachment)attachment;
         videoAttachment.Video.Should().NotBeNull();
         videoAttachment.Video.Id.Should().Be(123);
@@ -60,7 +60,7 @@ public class AttachmentTests
         // Assert
         attachment.Should().NotBeNull();
         attachment.Should().BeOfType<AudioAttachment>();
-        attachment.Type.Should().Be(MessageType.File);
+        attachment.Type.Should().Be("file");
         var audioAttachment = (AudioAttachment)attachment;
         audioAttachment.Audio.Should().NotBeNull();
         audioAttachment.Audio.Id.Should().Be(123);
@@ -79,7 +79,7 @@ public class AttachmentTests
         // Assert
         attachment.Should().NotBeNull();
         attachment.Should().BeOfType<DocumentAttachment>();
-        attachment.Type.Should().Be(MessageType.File);
+        attachment.Type.Should().Be("file");
         var documentAttachment = (DocumentAttachment)attachment;
         documentAttachment.Document.Should().NotBeNull();
         documentAttachment.Document.Id.Should().Be(123);
@@ -133,6 +133,40 @@ public class AttachmentTests
         json.Should().Contain("\"type\":\"file\"");
         json.Should().Contain("\"video\"");
         json.Should().Contain("\"file_id\":\"video123\"");
+    }
+
+    [Fact]
+    public void InlineKeyboardAttachment_ShouldDeserialize_FromJson()
+    {
+        // Arrange
+        var json = """
+            {
+                "type":"inline_keyboard",
+                "callback_id":"cb123",
+                "payload":{
+                    "buttons":[
+                        [
+                            {"text":"❤️ Меры поддержки","type":"message"}
+                        ]
+                    ]
+                }
+            }
+            """;
+
+        // Act
+        var attachment = MaxJsonSerializer.Deserialize<Attachment>(json);
+
+        // Assert
+        attachment.Should().NotBeNull();
+        attachment.Should().BeOfType<InlineKeyboardAttachment>();
+        attachment.Type.Should().Be("inline_keyboard");
+        var keyboardAttachment = (InlineKeyboardAttachment)attachment;
+        keyboardAttachment.CallbackId.Should().Be("cb123");
+        keyboardAttachment.Payload.Should().NotBeNull();
+        keyboardAttachment.Payload!.Should().ContainKey("buttons");
+        var buttonsElement = (JsonElement)keyboardAttachment.Payload!["buttons"];
+        buttonsElement.ValueKind.Should().Be(JsonValueKind.Array);
+        buttonsElement.GetArrayLength().Should().Be(1);
     }
 }
 

@@ -1,7 +1,7 @@
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Max.Bot.Types;
-using Max.Bot.Types.Enums;
 
 namespace Max.Bot.Types.Converters;
 
@@ -28,54 +28,49 @@ public class AttachmentJsonConverter : JsonConverter<Attachment>
         var root = document.RootElement;
 
         // Determine the attachment type based on properties
-        MessageType? attachmentType = null;
-        if (root.TryGetProperty("type", out var typeElement))
+        string? typeString = null;
+        if (root.TryGetProperty("type", out var typeElement) && typeElement.ValueKind == JsonValueKind.String)
         {
-            var typeString = typeElement.GetString();
-            if (!string.IsNullOrEmpty(typeString))
-            {
-                // Convert snake_case to PascalCase for enum parsing
-                var enumValue = typeString.Replace("_", string.Empty);
-                if (Enum.TryParse<MessageType>(enumValue, true, out var parsedType))
-                {
-                    attachmentType = parsedType;
-                }
-            }
+            typeString = typeElement.GetString();
         }
 
-        // Deserialize based on type and available properties
-        Attachment? attachment = null;
-        if (attachmentType == MessageType.Image || root.TryGetProperty("photo", out _))
+        if (IsType(typeString, AttachmentTypeNames.InlineKeyboard))
         {
-            attachment = JsonSerializer.Deserialize<PhotoAttachment>(root.GetRawText(), options);
-        }
-        else if (attachmentType == MessageType.File)
-        {
-            if (root.TryGetProperty("video", out _))
-            {
-                attachment = JsonSerializer.Deserialize<VideoAttachment>(root.GetRawText(), options);
-            }
-            else if (root.TryGetProperty("audio", out _))
-            {
-                attachment = JsonSerializer.Deserialize<AudioAttachment>(root.GetRawText(), options);
-            }
-            else if (root.TryGetProperty("document", out _))
-            {
-                attachment = JsonSerializer.Deserialize<DocumentAttachment>(root.GetRawText(), options);
-            }
-            else
-            {
-                // Default to document for unknown file types
-                attachment = JsonSerializer.Deserialize<DocumentAttachment>(root.GetRawText(), options);
-            }
-        }
-        else
-        {
-            // Default to document for unknown types
-            attachment = JsonSerializer.Deserialize<DocumentAttachment>(root.GetRawText(), options);
+            return JsonSerializer.Deserialize<InlineKeyboardAttachment>(root.GetRawText(), options);
         }
 
-        return attachment;
+        if (root.TryGetProperty("photo", out _))
+        {
+            return JsonSerializer.Deserialize<PhotoAttachment>(root.GetRawText(), options);
+        }
+
+        if (root.TryGetProperty("video", out _))
+        {
+            return JsonSerializer.Deserialize<VideoAttachment>(root.GetRawText(), options);
+        }
+
+        if (root.TryGetProperty("audio", out _))
+        {
+            return JsonSerializer.Deserialize<AudioAttachment>(root.GetRawText(), options);
+        }
+
+        if (root.TryGetProperty("document", out _))
+        {
+            return JsonSerializer.Deserialize<DocumentAttachment>(root.GetRawText(), options);
+        }
+
+        if (IsType(typeString, AttachmentTypeNames.Image))
+        {
+            return JsonSerializer.Deserialize<PhotoAttachment>(root.GetRawText(), options);
+        }
+
+        if (IsType(typeString, AttachmentTypeNames.File))
+        {
+            return JsonSerializer.Deserialize<DocumentAttachment>(root.GetRawText(), options);
+        }
+
+        // Default to document for unknown types
+        return JsonSerializer.Deserialize<DocumentAttachment>(root.GetRawText(), options);
     }
 
     /// <inheritdoc />
@@ -96,10 +91,18 @@ public class AttachmentJsonConverter : JsonConverter<Attachment>
             case DocumentAttachment documentAttachment:
                 JsonSerializer.Serialize(writer, documentAttachment, options);
                 break;
+            case InlineKeyboardAttachment inlineKeyboardAttachment:
+                JsonSerializer.Serialize(writer, inlineKeyboardAttachment, options);
+                break;
             default:
                 throw new JsonException($"Unknown attachment type: {value.GetType()}");
         }
     }
 
+    private static bool IsType(string? actualType, string expectedType)
+    {
+        return !string.IsNullOrWhiteSpace(actualType) &&
+               actualType.Equals(expectedType, StringComparison.OrdinalIgnoreCase);
+    }
 }
 
