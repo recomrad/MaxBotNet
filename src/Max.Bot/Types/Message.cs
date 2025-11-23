@@ -13,10 +13,10 @@ public class Message
     /// <summary>
     /// Gets or sets the unique identifier of the message.
     /// </summary>
-    /// <value>The unique identifier of the message.</value>
+    /// <value>The unique identifier of the message. May be null if the message only has a string ID in body.mid.</value>
     [Range(1, long.MaxValue, ErrorMessage = "Message ID must be greater than zero.")]
     [JsonPropertyName("id")]
-    public long Id { get; set; }
+    public long? Id { get; set; }
 
     /// <summary>
     /// Gets or sets the chat where the message was sent.

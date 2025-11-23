@@ -121,5 +121,29 @@ public class UpdateTests
         json.Should().NotContain("\"message\"");
         json.Should().NotContain("\"callback_query\"");
     }
+
+    [Fact]
+    public void Deserialize_ShouldDeserializeWebhookUpdateWithoutMessageId()
+    {
+        // Arrange - формат вебхука без message.id, только body.mid
+        var json = """{"message":{"recipient":{"chat_id":79313411,"chat_type":"dialog","user_id":94399782},"timestamp":1763928007254,"body":{"mid":"mid.0000000004ba3a03019ab24d62566a52","seq":115600785883425360,"text":"/start"},"sender":{"user_id":18503461,"first_name":"Александр","last_name":"Сюзев","is_bot":false,"last_activity_time":1763927992000,"name":"Александр Сюзев"}},"timestamp":1763928007254,"user_locale":"ru","update_type":"message_created"}""";
+
+        // Act
+        var result = MaxJsonSerializer.Deserialize<Update>(json);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.UpdateTypeRaw.Should().Be("message_created");
+        result.Type.Should().Be(UpdateType.Message);
+        result.Message.Should().NotBeNull();
+        result.Message!.Id.Should().BeNull(); // ID отсутствует в JSON
+        result.Message.Body.Should().NotBeNull();
+        result.Message.Body!.Mid.Should().Be("mid.0000000004ba3a03019ab24d62566a52");
+        result.Message.Body.Text.Should().Be("/start");
+        result.Message.Sender.Should().NotBeNull();
+        result.Message.Sender!.Id.Should().Be(18503461);
+        result.Message.Recipient.Should().NotBeNull();
+        result.Message.Recipient!.ChatId.Should().Be(79313411);
+    }
 }
 
