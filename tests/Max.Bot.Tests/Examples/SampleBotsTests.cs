@@ -61,10 +61,12 @@ public class SampleBotsTests
             Scenario(async harness =>
             {
                 harness.MessagesMock.Setup(m => m.SendMessageAsync(
-                        It.IsAny<SendMessageRequest>(),
-                        It.IsAny<long?>(),
-                        It.IsAny<long?>(),
+                        It.IsAny<long>(),
+                        It.IsAny<string>(),
+                        It.IsAny<InlineKeyboard>(),
                         It.IsAny<bool?>(),
+                        It.IsAny<bool?>(),
+                        It.IsAny<TextFormat?>(),
                         It.IsAny<CancellationToken>()))
                     .ReturnsAsync(new Message());
 
@@ -75,10 +77,12 @@ public class SampleBotsTests
                 await handler.HandleMessageAsync(CreateUpdateContext(harness.Api, CreateMessageUpdate("/buttons")), CancellationToken.None);
 
                 harness.MessagesMock.Verify(m => m.SendMessageAsync(
-                    It.Is<SendMessageRequest>(request => request.Attachments != null && request.Attachments.Length > 0),
-                    1337,
-                    null,
-                    null,
+                    It.Is<long>(chatId => chatId == 1337),
+                    It.Is<string>(text => text == "Choose an option:"),
+                    It.Is<InlineKeyboard>(keyboard => keyboard != null && keyboard.Buttons.Length > 0),
+                    It.IsAny<bool?>(),
+                    It.IsAny<bool?>(),
+                    It.IsAny<TextFormat?>(),
                     It.IsAny<CancellationToken>()), Times.Once);
 
                 var callbackUpdate = new Update
