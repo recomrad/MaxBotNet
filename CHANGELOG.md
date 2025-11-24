@@ -6,6 +6,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.3.0-alpha] - 2025-11-24
+
+### Added
+- Полная синхронизация типов `Update` с официальной документацией Max API.
+- Расширение `UpdateType` enum: добавлены все 16 официальных типов обновлений (`MessageCreated`, `MessageCallback`, `MessageEdited`, `MessageRemoved`, `BotAdded`, `BotRemoved`, `BotStarted`, `BotStopped`, `DialogMuted`, `DialogUnmuted`, `DialogCleared`, `DialogRemoved`, `UserAdded`, `UserRemoved`, `ChatTitleChanged`, `MessageChatCreated`).
+- Типизированные обёртки для всех типов update: `MessageEditedUpdate`, `MessageRemovedUpdate`, `BotAddedUpdate`, `BotRemovedUpdate`, `BotStartedUpdate`, `BotStoppedUpdate`, `UserAddedUpdate`, `UserRemovedUpdate`, `ChatTitleChangedUpdate`, `MessageChatCreatedUpdate` и другие.
+- Свойство `Update.Callback` для доступа к callback-запросам (соответствует API полю `callback`).
+- Свойства `Update.Chat`, `Update.User`, `Update.InviterId`, `Update.ChatId`, `Update.IsMuted` для различных типов обновлений.
+- Свойство `Chat.ChatId` как основное поле, соответствующее API полю `chat_id`.
+- Свойство `Message.Sender` как основное поле, соответствующее API полю `sender`.
+- Класс `LinkedMessage` для представления связанных сообщений (forward/reply).
+- Unit-тесты для всех новых типов update с примерами из реального API.
+
+### Changed
+- `UpdateType.Message` и `UpdateType.CallbackQuery` помечены как устаревшие (используйте `MessageCreated` и `MessageCallback`).
+- `Update.CallbackQuery` помечено как устаревшее (используйте `Update.Callback`).
+- `Message.From` помечено как устаревшее (используйте `Message.Sender`).
+- `Chat.Id` теперь read-only свойство-алиас для `Chat.ChatId` (для обратной совместимости).
+- `ChatType.Private` и `ChatType.Group` помечены как устаревшие (используйте `Dialog` и `Chat` соответственно).
+- Значения `ChatType` enum приведены в соответствие с API: `Dialog` (вместо `Private`), `Chat` (вместо `Group`).
+- `UpdateJsonConverter` обновлён для корректной десериализации всех типов update и их специфичных полей.
+- `UpdateHandlerExecutor` обновлён для использования новых значений `UpdateType.MessageCreated` и `UpdateType.MessageCallback`.
+- Все примеры и тесты обновлены для использования новых API-совместимых имён полей.
+
+### Fixed
+- Исправлена десериализация `ChatType` enum: добавлен `JsonStringEnumConverter` для корректного преобразования строковых значений API.
+- Исправлена десериализация `Update` объектов: все поля теперь корректно парсятся в зависимости от `update_type`.
+- Исправлены тесты для соответствия новой структуре API (использование `chat_id` вместо `id`, `sender` вместо `from`, `dialog`/`chat` вместо `private`/`group`).
+
 ## [0.2.7-alpha] - 2025-11-24
 
 ### Changed
@@ -70,7 +99,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic infrastructure and folder structure
 - Build configuration for .NET 9
 
-[Unreleased]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.2.7-alpha...HEAD
+[Unreleased]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.3.0-alpha...HEAD
+[0.3.0-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.2.7-alpha...v0.3.0-alpha
 [0.2.7-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.2.6-alpha...v0.2.7-alpha
 [0.2.6-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.2.5-alpha...v0.2.6-alpha
 [0.2.5-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.2.4-alpha...v0.2.5-alpha
