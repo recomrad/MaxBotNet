@@ -34,3 +34,6 @@ public class CallbackQueryUpdate
     public CallbackQuery CallbackQuery { get; set; } = null!;
 }
 
+
+
+

@@ -72,11 +72,7 @@ internal class MessagesApi : BaseApi, IMessagesApi
         {
             sendRequest.Attachments = new[]
             {
-                new AttachmentRequest
-                {
-                    Type = "inline_keyboard",
-                    Payload = keyboard
-                }
+                CreateInlineKeyboardAttachment(keyboard)
             };
         }
 
@@ -120,11 +116,7 @@ internal class MessagesApi : BaseApi, IMessagesApi
         {
             sendRequest.Attachments = new[]
             {
-                new AttachmentRequest
-                {
-                    Type = "inline_keyboard",
-                    Payload = keyboard
-                }
+                CreateInlineKeyboardAttachment(keyboard)
             };
         }
 
@@ -423,6 +415,26 @@ internal class MessagesApi : BaseApi, IMessagesApi
         };
 
         return await SendMessageAsync(request, chatId, userId, disableLinkPreview, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static AttachmentRequest CreateInlineKeyboardAttachment(InlineKeyboard keyboard)
+    {
+        ArgumentNullException.ThrowIfNull(keyboard);
+
+        var sourceRows = keyboard.Buttons ?? Array.Empty<InlineKeyboardButton[]>();
+        var normalizedRows = new InlineKeyboardButton[sourceRows.Length][];
+        for (var i = 0; i < sourceRows.Length; i++)
+        {
+            normalizedRows[i] = sourceRows[i] ?? Array.Empty<InlineKeyboardButton>();
+        }
+
+        var payloadKeyboard = new InlineKeyboard(normalizedRows);
+
+        return new AttachmentRequest
+        {
+            Type = AttachmentTypeNames.InlineKeyboard,
+            Payload = payloadKeyboard
+        };
     }
 }
 

@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Max.Bot.Types;
@@ -13,8 +12,29 @@ public class InlineKeyboard
     /// Each inner array represents a row of buttons.
     /// </summary>
     /// <value>An array of button rows, where each row is an array of buttons.</value>
-    [JsonPropertyName("inline_keyboard")]
-    public InlineKeyboardButton[][] Buttons { get; set; } = Array.Empty<InlineKeyboardButton[]>();
+    [JsonPropertyName("buttons")]
+    public InlineKeyboardButton[][] Buttons
+    {
+        get => _buttons;
+        set
+        {
+            if (value == null)
+            {
+                _buttons = Array.Empty<InlineKeyboardButton[]>();
+                return;
+            }
+
+            var sanitized = new InlineKeyboardButton[value.Length][];
+            for (var i = 0; i < value.Length; i++)
+            {
+                sanitized[i] = value[i] ?? Array.Empty<InlineKeyboardButton>();
+            }
+
+            _buttons = sanitized;
+        }
+    }
+
+    private InlineKeyboardButton[][] _buttons = Array.Empty<InlineKeyboardButton[]>();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InlineKeyboard"/> class.
