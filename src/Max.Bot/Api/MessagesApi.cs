@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net.Http;
 using Max.Bot.Configuration;
 using Max.Bot.Networking;
@@ -223,20 +224,25 @@ internal class MessagesApi : BaseApi, IMessagesApi
             throw new ArgumentException("Message ID cannot be null or empty.", nameof(messageId));
         }
 
+        // Получаем текущее сообщение, чтобы сохранить другие вложения (изображения, файлы и т.д.)
+        var currentMessage = await GetMessageAsync(messageId, cancellationToken).ConfigureAwait(false);
+        var attachments = currentMessage.Body?.Attachments ?? Array.Empty<Attachment>();
+        var attachmentsWithoutKeyboard = attachments
+            .Where(a => a is not InlineKeyboardAttachment)
+            .ToList();
+
         var editRequest = new EditMessageRequest();
 
         if (keyboard == null)
         {
-            // Пустой массив удаляет все вложения, включая клавиатуру
-            editRequest.Attachments = Array.Empty<Attachment>();
+            // Удаляем только клавиатуру, сохраняя остальные вложения
+            editRequest.Attachments = attachmentsWithoutKeyboard.ToArray();
         }
         else
         {
-            // Заменяем клавиатуру новой
-            editRequest.Attachments = new[]
-            {
-                CreateInlineKeyboardAttachmentForEdit(keyboard)
-            };
+            // Заменяем клавиатуру новой, сохраняя остальные вложения
+            attachmentsWithoutKeyboard.Add(CreateInlineKeyboardAttachmentForEdit(keyboard));
+            editRequest.Attachments = attachmentsWithoutKeyboard.ToArray();
         }
 
         return await EditMessageAsync(messageId, editRequest, cancellationToken).ConfigureAwait(false);
@@ -487,4 +493,3 @@ internal class MessagesApi : BaseApi, IMessagesApi
         };
     }
 }
-
