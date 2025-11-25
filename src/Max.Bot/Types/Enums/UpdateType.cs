@@ -91,21 +91,5 @@ public enum UpdateType
     /// <summary>
     /// Chat was created via message (update_type: "message_chat_created").
     /// </summary>
-    MessageChatCreated = 16,
-
-    #region Backward Compatibility Aliases
-
-    /// <summary>
-    /// Alias for MessageCreated. Use MessageCreated instead.
-    /// </summary>
-    [Obsolete("Use MessageCreated instead. This alias will be removed in future versions.")]
-    Message = MessageCreated,
-
-    /// <summary>
-    /// Alias for MessageCallback. Use MessageCallback instead.
-    /// </summary>
-    [Obsolete("Use MessageCallback instead. This alias will be removed in future versions.")]
-    CallbackQuery = MessageCallback
-
-    #endregion
+    MessageChatCreated = 16
 }

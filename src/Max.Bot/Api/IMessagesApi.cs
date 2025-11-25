@@ -99,6 +99,20 @@ public interface IMessagesApi
     Task<Response> EditMessageAsync(string messageId, EditMessageRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Edits only the reply markup (inline keyboard) of a message.
+    /// If keyboard is null, removes the keyboard. If keyboard is provided, replaces the existing keyboard.
+    /// </summary>
+    /// <param name="messageId">The unique identifier of the message to edit.</param>
+    /// <param name="keyboard">The new inline keyboard to set. If null, the keyboard will be removed.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the response with success status.</returns>
+    /// <exception cref="ArgumentException">Thrown when messageId is null or empty.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxApiException">Thrown when the API returns an error response.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxNetworkException">Thrown when a network error occurs.</exception>
+    /// <exception cref="Max.Bot.Exceptions.MaxUnauthorizedException">Thrown when authentication fails.</exception>
+    Task<Response> EditMessageReplyMarkupAsync(string messageId, InlineKeyboard? keyboard = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Deletes a message from the specified chat.
     /// </summary>
     /// <param name="messageId">The unique identifier of the message to delete.</param>

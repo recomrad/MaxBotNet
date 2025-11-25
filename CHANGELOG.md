@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.3.1-alpha] - 2025-11-25
+
+### Added
+- Метод `EditMessageReplyMarkupAsync` для редактирования только клавиатуры сообщения, аналогичный Telegram API. Позволяет удалять или заменять inline-клавиатуру в одну строчку.
+
+### Changed
+- Увеличен лимит валидации `CallbackId` с 64 до 512 символов для поддержки реальных callback_id от Max API (~128 символов).
+
+### Removed
+- Удалены устаревшие legacy части для соответствия оригинальному Max API:
+  - Удалено устаревшее свойство `Update.CallbackQuery` (используйте `Update.Callback`).
+  - Удалены устаревшие enum aliases `UpdateType.Message` и `UpdateType.CallbackQuery` (используйте `UpdateType.MessageCreated` и `UpdateType.MessageCallback`).
+
+### Fixed
+- Исправлена ошибка валидации при обработке callback-запросов: реальные callback_id от API (~128 символов) теперь корректно принимаются благодаря увеличению лимита валидации.
+
 ## [0.3.0-alpha] - 2025-11-24
 
 ### Added
@@ -99,7 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic infrastructure and folder structure
 - Build configuration for .NET 9
 
-[Unreleased]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.3.0-alpha...HEAD
+[Unreleased]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.3.1-alpha...HEAD
+[0.3.1-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.3.0-alpha...v0.3.1-alpha
 [0.3.0-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.2.7-alpha...v0.3.0-alpha
 [0.2.7-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.2.6-alpha...v0.2.7-alpha
 [0.2.6-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.2.5-alpha...v0.2.6-alpha

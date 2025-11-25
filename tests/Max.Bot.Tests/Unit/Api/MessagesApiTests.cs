@@ -231,6 +231,98 @@ public class MessagesApiTests
     }
 
     [Fact]
+    public async Task EditMessageReplyMarkupAsync_ShouldRemoveKeyboard_WhenKeyboardIsNull()
+    {
+        // Arrange
+        var messageId = "msg-123";
+        var response = new Response
+        {
+            Success = true,
+            Message = "Keyboard removed successfully"
+        };
+
+        _mockHttpClient
+            .Setup(x => x.SendAsync<Response>(
+                It.Is<MaxApiRequest>(req =>
+                    req.Method == HttpMethod.Put &&
+                    req.Endpoint == "/messages" &&
+                    req.QueryParameters != null &&
+                    req.QueryParameters.ContainsKey("message_id") &&
+                    req.QueryParameters["message_id"] == messageId &&
+                    req.Body != null),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        var messagesApi = new MessagesApi(_mockHttpClient.Object, _options);
+
+        // Act
+        var result = await messagesApi.EditMessageReplyMarkupAsync(messageId, null);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Success.Should().BeTrue();
+        result.Message.Should().Be("Keyboard removed successfully");
+    }
+
+    [Fact]
+    public async Task EditMessageReplyMarkupAsync_ShouldReplaceKeyboard_WhenKeyboardIsProvided()
+    {
+        // Arrange
+        var messageId = "msg-123";
+        var keyboard = new InlineKeyboard(new[]
+        {
+            new[]
+            {
+                new InlineKeyboardButton { Text = "Button 1", Payload = "btn1", Type = ButtonType.Callback }
+            }
+        });
+        var response = new Response
+        {
+            Success = true,
+            Message = "Keyboard replaced successfully"
+        };
+
+        _mockHttpClient
+            .Setup(x => x.SendAsync<Response>(
+                It.Is<MaxApiRequest>(req =>
+                    req.Method == HttpMethod.Put &&
+                    req.Endpoint == "/messages" &&
+                    req.QueryParameters != null &&
+                    req.QueryParameters.ContainsKey("message_id") &&
+                    req.QueryParameters["message_id"] == messageId &&
+                    req.Body != null),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        var messagesApi = new MessagesApi(_mockHttpClient.Object, _options);
+
+        // Act
+        var result = await messagesApi.EditMessageReplyMarkupAsync(messageId, keyboard);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Success.Should().BeTrue();
+        result.Message.Should().Be("Keyboard replaced successfully");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task EditMessageReplyMarkupAsync_ShouldThrowArgumentException_WhenMessageIdIsNullOrEmpty(string? messageId)
+    {
+        // Arrange
+        var messagesApi = new MessagesApi(_mockHttpClient.Object, _options);
+
+        // Act
+        var act = async () => await messagesApi.EditMessageReplyMarkupAsync(messageId!);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("messageId");
+    }
+
+    [Fact]
     public async Task DeleteMessageAsync_ShouldReturnResponse_WhenRequestSucceeds()
     {
         // Arrange

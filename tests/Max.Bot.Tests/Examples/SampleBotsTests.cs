@@ -89,7 +89,7 @@ public class SampleBotsTests
                 {
                     UpdateId = 2,
                     UpdateTypeRaw = "message_callback",
-                    CallbackQuery = new CallbackQuery
+                    Callback = new CallbackQuery
                     {
                         CallbackId = "cb-1",
                         Payload = "vote:approve",

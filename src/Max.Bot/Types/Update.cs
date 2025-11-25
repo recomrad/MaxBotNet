@@ -442,22 +442,6 @@ public class Update
 
     #endregion
 
-    #region Backward Compatibility
-
-    /// <summary>
-    /// Gets or sets the callback query (alias for Callback property).
-    /// Maintained for backward compatibility.
-    /// </summary>
-    [JsonIgnore]
-    [Obsolete("Use Callback property instead. This property will be removed in future versions.")]
-    public CallbackQuery? CallbackQuery
-    {
-        get => Callback;
-        set => Callback = value;
-    }
-
-    #endregion
-
     /// <summary>
     /// Parses the raw update_type string to UpdateType enum.
     /// </summary>

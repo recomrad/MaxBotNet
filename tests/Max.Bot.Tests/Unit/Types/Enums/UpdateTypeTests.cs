@@ -35,13 +35,7 @@ public class UpdateTypeTests
         var actualTypes = Enum.GetValues<UpdateType>();
 
         actualTypes.Should().Contain(expectedTypes);
-        // 17 types + 2 obsolete aliases (Message, CallbackQuery) = 19 values in Enum.GetValues
-        // But since aliases have same underlying values, GetValues returns 19 entries including duplicates
-        actualTypes.Should().HaveCountGreaterThanOrEqualTo(17);
-
-        // Verify distinct count (excluding obsolete aliases with same values)
-        var distinctTypes = actualTypes.Distinct().ToArray();
-        distinctTypes.Should().HaveCount(17); // 16 official + Unknown
+        actualTypes.Should().HaveCount(17); // 16 official + Unknown
     }
 
     [Fact]

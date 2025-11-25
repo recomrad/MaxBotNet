@@ -25,7 +25,7 @@ public class DelegatingUpdateHandlerTests
                 return Task.CompletedTask;
             });
 
-        var context = CreateContext(UpdateType.Message);
+        var context = CreateContext(UpdateType.MessageCreated);
 
         // Act
         await handler.HandleMessageAsync(context, CancellationToken.None);
@@ -39,7 +39,7 @@ public class DelegatingUpdateHandlerTests
     {
         // Arrange
         var handler = new DelegatingUpdateHandler();
-        var context = CreateContext(UpdateType.CallbackQuery);
+        var context = CreateContext(UpdateType.MessageCallback);
 
         // Act / Assert (no exception)
         await handler.HandleCallbackQueryAsync(context, CancellationToken.None);
@@ -50,9 +50,9 @@ public class DelegatingUpdateHandlerTests
         var update = new Update
         {
             UpdateId = 1,
-            UpdateTypeRaw = type == UpdateType.Message ? "message_created" : "message_callback",
-            Message = type == UpdateType.Message ? new Message() : null,
-            CallbackQuery = type == UpdateType.CallbackQuery ? new CallbackQuery { CallbackId = "cb", User = new User { Id = 1 } } : null
+            UpdateTypeRaw = type == UpdateType.MessageCreated ? "message_created" : "message_callback",
+            Message = type == UpdateType.MessageCreated ? new Message() : null,
+            Callback = type == UpdateType.MessageCallback ? new CallbackQuery { CallbackId = "cb", User = new User { Id = 1 } } : null
         };
 
         var api = new Mock<IMaxBotApi>().Object;

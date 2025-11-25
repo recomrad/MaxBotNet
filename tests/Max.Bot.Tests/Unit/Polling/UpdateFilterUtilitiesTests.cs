@@ -30,7 +30,7 @@ public class UpdateFilterUtilitiesTests
     {
         // Arrange
         var options = CreateOptions();
-        options.Handling.AllowedUpdateTypes.Add(UpdateType.CallbackQuery);
+        options.Handling.AllowedUpdateTypes.Add(UpdateType.MessageCallback);
         var typeFilter = UpdateFilterUtilities.BuildTypeFilter(options);
         var update = new Update { UpdateTypeRaw = "message_created", Message = new Message { From = new User { Username = "tester" } } };
 

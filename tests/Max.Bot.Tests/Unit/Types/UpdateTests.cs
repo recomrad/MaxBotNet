@@ -562,24 +562,6 @@ public class UpdateTests
     #region Backward Compatibility Tests
 
     [Fact]
-    public void BackwardCompatibility_CallbackQueryProperty_ShouldWork()
-    {
-        // Arrange
-        var json = """{"update_id":2,"update_type":"message_callback","callback":{"callback_id":"cb123","user":{"user_id":123,"is_bot":false},"payload":"test"}}""";
-
-        // Act
-        var result = MaxJsonSerializer.Deserialize<Update>(json);
-
-        // Assert
-#pragma warning disable CS0618 // CallbackQuery is obsolete
-        result!.CallbackQuery.Should().NotBeNull();
-        result.CallbackQuery!.CallbackId.Should().Be("cb123");
-        // Both should reference the same object
-        result.CallbackQuery.Should().BeSameAs(result.Callback);
-#pragma warning restore CS0618
-    }
-
-    [Fact]
     public void BackwardCompatibility_LegacyMessageFormat_ShouldWork()
     {
         // Arrange - legacy format with id and chat fields
