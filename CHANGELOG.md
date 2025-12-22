@@ -112,6 +112,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - README и новый `RELEASING.md`, описывающие CI/CD и инструкции по релизу.
 
+## [0.3.4-alpha] - 2025-12-22
+
+### Added
+- Unit-тесты `MessageRecipientTests` с 8 сценариями проверки десериализации и сериализации `MessageRecipient.ChatId` и `UserId` со значениями 0, null и положительными числами.
+
+### Fixed
+- **КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ:** Убрана строгая валидация `[Range(1, long.MaxValue)]` для `MessageRecipient.ChatId` и `MessageRecipient.UserId`, чтобы поддержать личные сообщения (direct messages), где Max API может передавать `ChatId = 0` или `null`. Оба свойства остались nullable (`long?`), но теперь принимают любые значения, включая 0. Это исправление критично для работы с личными сообщениями в Max Messenger.
+
 ## [0.2.0-alpha] - 2025-11-17
 
 ### Added
@@ -131,7 +139,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic infrastructure and folder structure
 - Build configuration for .NET 9
 
-[Unreleased]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.3.3-alpha...HEAD
+[Unreleased]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.3.4-alpha...HEAD
+[0.3.4-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.3.3-alpha...v0.3.4-alpha
 [0.3.3-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.3.2-alpha...v0.3.3-alpha
 [0.3.2-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.3.1-alpha...v0.3.2-alpha
 [0.3.1-alpha]: https://github.com/MaxBotNet/MaxBotNet/compare/v0.3.0-alpha...v0.3.1-alpha

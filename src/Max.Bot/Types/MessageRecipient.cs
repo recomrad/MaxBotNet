@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using Max.Bot.Types.Enums;
 
 namespace Max.Bot.Types;
 
@@ -11,9 +9,9 @@ public class MessageRecipient
 {
     /// <summary>
     /// Gets or sets the chat ID of the recipient.
+    /// For direct messages (dialogs), this can be null or 0.
     /// </summary>
-    /// <value>The unique identifier of the chat.</value>
-    [Range(1, long.MaxValue, ErrorMessage = "Chat ID must be greater than zero.")]
+    /// <value>The unique identifier of the chat, or null/0 for direct messages.</value>
     [JsonPropertyName("chat_id")]
     public long? ChatId { get; set; }
 
@@ -27,8 +25,7 @@ public class MessageRecipient
     /// <summary>
     /// Gets or sets the user ID of the recipient (for dialogs).
     /// </summary>
-    /// <value>The unique identifier of the user.</value>
-    [Range(1, long.MaxValue, ErrorMessage = "User ID must be greater than zero.")]
+    /// <value>The unique identifier of the user, or null if not applicable.</value>
     [JsonPropertyName("user_id")]
     public long? UserId { get; set; }
 }
