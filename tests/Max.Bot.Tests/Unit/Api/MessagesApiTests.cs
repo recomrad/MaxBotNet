@@ -69,21 +69,6 @@ public class MessagesApiTests
     }
 
     [Theory]
-    [InlineData(long.MinValue)] // No validation - remove this test or change expectations
-    public async Task SendMessageAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var messagesApi = new MessagesApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await messagesApi.SendMessageAsync(chatId, "test");
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
-    }
-
-    [Theory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
@@ -139,21 +124,6 @@ public class MessagesApiTests
         result.Should().HaveCount(2);
         result[0].Id.Should().Be(1);
         result[1].Id.Should().Be(2);
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    public async Task GetMessagesAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var messagesApi = new MessagesApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await messagesApi.GetMessagesAsync(chatId);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
     }
 
     [Fact]

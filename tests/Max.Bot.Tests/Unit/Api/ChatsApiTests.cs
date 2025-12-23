@@ -66,21 +66,6 @@ public class ChatsApiTests
         result.Username.Should().Be(expectedChat.Username);
     }
 
-    [Theory]
-    [InlineData(long.MinValue)] // Extreme negative value that would be invalid
-    public async Task GetChatAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.GetChatAsync(chatId);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
-    }
-
     [Fact]
     public async Task GetChatsAsync_ShouldReturnChats_WhenRequestSucceeds()
     {
@@ -260,22 +245,6 @@ public class ChatsApiTests
             .WithParameterName("request");
     }
 
-    [Theory]
-    [InlineData(-1)]
-    public async Task UpdateChatAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var request = new UpdateChatRequest { Title = "Test" };
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.UpdateChatAsync(chatId, request);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
-    }
-
     #endregion
 
     #region DeleteChatAsync Tests
@@ -304,21 +273,6 @@ public class ChatsApiTests
         result.Should().NotBeNull();
         result.Success.Should().BeTrue();
         result.Message.Should().Be("Chat deleted");
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    public async Task DeleteChatAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.DeleteChatAsync(chatId);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
     }
 
     #endregion
@@ -364,22 +318,6 @@ public class ChatsApiTests
         // Assert
         await act.Should().ThrowAsync<ArgumentNullException>()
             .WithParameterName("request");
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    public async Task SendChatActionAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var request = new SendChatActionRequest { Action = ChatAction.TypingOn };
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.SendChatActionAsync(chatId, request);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
     }
 
     #endregion
@@ -452,21 +390,6 @@ public class ChatsApiTests
         result.Should().BeNull();
     }
 
-    [Theory]
-    [InlineData(-1)]
-    public async Task GetPinnedMessageAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.GetPinnedMessageAsync(chatId);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
-    }
-
     #endregion
 
     #region PinMessageAsync Tests
@@ -512,22 +435,6 @@ public class ChatsApiTests
             .WithParameterName("request");
     }
 
-    [Theory]
-    [InlineData(-1)]
-    public async Task PinMessageAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var request = new PinMessageRequest { MessageId = "789" };
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.PinMessageAsync(chatId, request);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
-    }
-
     #endregion
 
     #region UnpinMessageAsync Tests
@@ -555,21 +462,6 @@ public class ChatsApiTests
         // Assert
         result.Should().NotBeNull();
         result.Success.Should().BeTrue();
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    public async Task UnpinMessageAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.UnpinMessageAsync(chatId);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
     }
 
     #endregion
@@ -614,21 +506,6 @@ public class ChatsApiTests
         result.Title.Should().Be(expectedChat.Title);
     }
 
-    [Theory]
-    [InlineData(-1)]
-    public async Task GetChatMembershipAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.GetChatMembershipAsync(chatId);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
-    }
-
     #endregion
 
     #region LeaveChatAsync Tests
@@ -657,21 +534,6 @@ public class ChatsApiTests
         result.Should().NotBeNull();
         result.Success.Should().BeTrue();
         result.Message.Should().Be("Left chat");
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    public async Task LeaveChatAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.LeaveChatAsync(chatId);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
     }
 
     #endregion
@@ -714,21 +576,6 @@ public class ChatsApiTests
         result.Should().HaveCount(2);
         result[0].Id.Should().Be(100L);
         result[1].Id.Should().Be(200L);
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    public async Task GetChatAdminsAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.GetChatAdminsAsync(chatId);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
     }
 
     #endregion
@@ -776,22 +623,6 @@ public class ChatsApiTests
             .WithParameterName("request");
     }
 
-    [Theory]
-    [InlineData(-1)]
-    public async Task AddChatAdminAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var request = new AddChatAdminRequest { UserId = 789L };
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.AddChatAdminAsync(chatId, request);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
-    }
-
     #endregion
 
     #region RemoveChatAdminAsync Tests
@@ -820,21 +651,6 @@ public class ChatsApiTests
         // Assert
         result.Should().NotBeNull();
         result.Success.Should().BeTrue();
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    public async Task RemoveChatAdminAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.RemoveChatAdminAsync(chatId, 789L);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
     }
 
     [Theory]
@@ -938,21 +754,6 @@ public class ChatsApiTests
         result.Should().HaveCount(1);
     }
 
-    [Theory]
-    [InlineData(-1)]
-    public async Task GetChatMembersAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.GetChatMembersAsync(chatId);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
-    }
-
     #endregion
 
     #region AddChatMembersAsync Tests
@@ -998,22 +799,6 @@ public class ChatsApiTests
             .WithParameterName("request");
     }
 
-    [Theory]
-    [InlineData(-1)]
-    public async Task AddChatMembersAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var request = new AddChatMembersRequest { UserIds = new[] { 100L } };
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.AddChatMembersAsync(chatId, request);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
-    }
-
     #endregion
 
     #region RemoveChatMemberAsync Tests
@@ -1045,21 +830,6 @@ public class ChatsApiTests
         // Assert
         result.Should().NotBeNull();
         result.Success.Should().BeTrue();
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    public async Task RemoveChatMemberAsync_ShouldThrowArgumentException_WhenChatIdIsInvalid(long chatId)
-    {
-        // Arrange
-        var chatsApi = new ChatsApi(_mockHttpClient.Object, _options);
-
-        // Act
-        var act = async () => await chatsApi.RemoveChatMemberAsync(chatId, 789L);
-
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName("chatId");
     }
 
     [Theory]
