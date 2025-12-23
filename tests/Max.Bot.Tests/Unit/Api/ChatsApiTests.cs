@@ -1,4 +1,4 @@
-﻿// рџ“Ѓ ChatsApiTests.cs - Unit tests for ChatsApi endpoints
+// рџ“Ѓ ChatsApiTests.cs - Unit tests for ChatsApi endpoints
 // рџЋЇ Core function: Verifies request paths and response mapping for chat APIs.
 // рџ”— Key dependencies: Moq IMaxHttpClient, MaxJsonSerializer, ChatsApi.
 // рџ’Ў Usage: Ensures chat endpoints follow API contract without legacy aliases.
