@@ -21,6 +21,16 @@ _Новые изменения появятся здесь._
 - Обновлены тесты для `ForwardMessageAsync` и `ReplyToMessageAsync` с новыми проверками для `string messageId`.
 - Обновлены тесты `NewMessageLinkTests` для работы с `string Id`.
 
+### Fixed
+- Убран атрибут `[Range(1, long.MaxValue)]` из `NewMessageLink.ChatId`, который блокировал отрицательные ID для групповых чатов.
+- Добавлена документация для `NewMessageLink.ChatId`: положительные значения для личных чатов, отрицательные для групповых.
+
+### Added
+- 4 новых теста в `NewMessageLinkTests`:
+  - `ChatId_ShouldAcceptPositiveValues_ForPersonalChats` (2 сценария)
+  - `ChatId_ShouldAcceptNegativeValues_ForGroupChats` (2 сценария)
+  - `ShouldSerializeCorrectly_WithNegativeChatId_ForGroupChats`
+
 ## [0.3.6-alpha] - 2025-12-23
 
 ### Removed
