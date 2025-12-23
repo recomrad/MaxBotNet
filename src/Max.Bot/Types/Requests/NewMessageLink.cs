@@ -12,9 +12,10 @@ public class NewMessageLink
     /// Gets or sets the unique identifier of the message to link to.
     /// </summary>
     /// <value>The unique identifier of the message.</value>
-    [Range(1, long.MaxValue, ErrorMessage = "Message ID must be greater than zero.")]
+    [Required(ErrorMessage = "Message ID is required.")]
+    [StringLength(256, ErrorMessage = "Message ID must not exceed 256 characters.")]
     [JsonPropertyName("id")]
-    public long Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the unique identifier of the chat containing the message.

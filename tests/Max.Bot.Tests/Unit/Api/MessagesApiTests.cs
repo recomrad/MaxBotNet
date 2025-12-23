@@ -738,7 +738,7 @@ public class MessagesApiTests
     {
         // Arrange
         var chatId = 123456L;
-        var messageId = 789L;
+        var messageId = "789";
 
         var expectedMessage = new Message
         {
@@ -773,14 +773,17 @@ public class MessagesApiTests
         result.Id.Should().Be(expectedMessage.Id);
     }
 
-    [Fact]
-    public async Task ForwardMessageAsync_ShouldThrowArgumentException_WhenMessageIdIsZero()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task ForwardMessageAsync_ShouldThrowArgumentException_WhenMessageIdIsNullOrEmpty(string? messageId)
     {
         // Arrange
         var messagesApi = new MessagesApi(_mockHttpClient.Object, _options);
 
         // Act
-        var act = async () => await messagesApi.ForwardMessageAsync(0, chatId: 1);
+        var act = async () => await messagesApi.ForwardMessageAsync(messageId!, chatId: 1);
 
         // Assert
         await act.Should().ThrowAsync<ArgumentException>()
@@ -792,7 +795,7 @@ public class MessagesApiTests
     {
         // Arrange
         var chatId = 123456L;
-        var messageId = 789L;
+        var messageId = "789";
         var text = "Reply text";
 
         var expectedMessage = new Message
@@ -829,14 +832,17 @@ public class MessagesApiTests
         result.Text.Should().Be(text);
     }
 
-    [Fact]
-    public async Task ReplyToMessageAsync_ShouldThrowArgumentException_WhenMessageIdIsZero()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task ReplyToMessageAsync_ShouldThrowArgumentException_WhenMessageIdIsNullOrEmpty(string? messageId)
     {
         // Arrange
         var messagesApi = new MessagesApi(_mockHttpClient.Object, _options);
 
         // Act
-        var act = async () => await messagesApi.ReplyToMessageAsync(0, "text", chatId: 1);
+        var act = async () => await messagesApi.ReplyToMessageAsync(messageId!, "text", chatId: 1);
 
         // Assert
         await act.Should().ThrowAsync<ArgumentException>()
@@ -853,7 +859,7 @@ public class MessagesApiTests
         var messagesApi = new MessagesApi(_mockHttpClient.Object, _options);
 
         // Act
-        var act = async () => await messagesApi.ReplyToMessageAsync(1, text!, chatId: 1);
+        var act = async () => await messagesApi.ReplyToMessageAsync("1", text!, chatId: 1);
 
         // Assert
         await act.Should().ThrowAsync<ArgumentException>()

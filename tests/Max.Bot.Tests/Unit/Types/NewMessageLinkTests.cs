@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using FluentAssertions;
 using Max.Bot.Types.Requests;
-using Xunit;
 
 namespace Max.Bot.Tests.Unit.Types;
 
@@ -11,13 +10,15 @@ namespace Max.Bot.Tests.Unit.Types;
 /// </summary>
 public class NewMessageLinkTests
 {
-    [Fact]
-    public void Id_ShouldBeGreaterThanZero()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void Id_ShouldBeRequired(string? id)
     {
         // Arrange
         var link = new NewMessageLink
         {
-            Id = 0,
+            Id = id!,
             ChatId = null
         };
 
@@ -25,7 +26,7 @@ public class NewMessageLinkTests
         var validationResults = ValidateModel(link);
 
         // Assert
-        validationResults.Should().Contain(v => v.MemberNames.Contains("Id") && v.ErrorMessage != null && v.ErrorMessage.Contains("greater than zero", StringComparison.OrdinalIgnoreCase));
+        validationResults.Should().Contain(v => v.MemberNames.Contains("Id") && v.ErrorMessage != null && v.ErrorMessage.Contains("required", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -34,7 +35,7 @@ public class NewMessageLinkTests
         // Arrange
         var link = new NewMessageLink
         {
-            Id = 1,
+            Id = "1",
             ChatId = 0
         };
 
@@ -51,7 +52,7 @@ public class NewMessageLinkTests
         // Arrange
         var link = new NewMessageLink
         {
-            Id = 1,
+            Id = "1",
             ChatId = null
         };
 
@@ -68,7 +69,7 @@ public class NewMessageLinkTests
         // Arrange
         var link = new NewMessageLink
         {
-            Id = 12345,
+            Id = "12345",
             ChatId = 67890
         };
 
@@ -76,7 +77,7 @@ public class NewMessageLinkTests
         var json = JsonSerializer.Serialize(link);
 
         // Assert
-        json.Should().Contain("\"id\":12345");
+        json.Should().Contain("\"id\":\"12345\"");
         json.Should().Contain("\"chat_id\":67890");
     }
 
@@ -86,7 +87,7 @@ public class NewMessageLinkTests
         // Arrange
         var link = new NewMessageLink
         {
-            Id = 12345,
+            Id = "12345",
             ChatId = null
         };
 
@@ -94,7 +95,7 @@ public class NewMessageLinkTests
         var json = JsonSerializer.Serialize(link);
 
         // Assert
-        json.Should().Contain("\"id\":12345");
+        json.Should().Contain("\"id\":\"12345\"");
         json.Should().Contain("\"chat_id\":null");
     }
 

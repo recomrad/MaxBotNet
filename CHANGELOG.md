@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Новые изменения появятся здесь._
 
+## [0.3.7-alpha] - 2025-12-23
+
+### Changed
+- **BREAKING**: Изменен тип `messageId` с `long` на `string` в методах:
+  - `IMessagesApi.ForwardMessageAsync()`
+  - `IMessagesApi.ReplyToMessageAsync()`
+  - `NewMessageLink.Id`
+- Обновлена валидация: вместо проверки `messageId <= 0` используется `ValidateNotEmpty()`.
+- Обновлены тесты для `ForwardMessageAsync` и `ReplyToMessageAsync` с новыми проверками для `string messageId`.
+- Обновлены тесты `NewMessageLinkTests` для работы с `string Id`.
+
 ## [0.3.6-alpha] - 2025-12-23
 
 ### Removed

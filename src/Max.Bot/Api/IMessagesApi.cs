@@ -198,7 +198,7 @@ public interface IMessagesApi
     /// <exception cref="Max.Bot.Exceptions.MaxApiException">Thrown when the API returns an error response.</exception>
     /// <exception cref="Max.Bot.Exceptions.MaxNetworkException">Thrown when a network error occurs.</exception>
     /// <exception cref="Max.Bot.Exceptions.MaxUnauthorizedException">Thrown when authentication fails.</exception>
-    Task<Message> ForwardMessageAsync(long messageId, long? messageChatId = null, long? chatId = null, long? userId = null, string? text = null, bool? disableLinkPreview = null, bool? notify = null, TextFormat? format = null, CancellationToken cancellationToken = default);
+    Task<Message> ForwardMessageAsync(string messageId, long? messageChatId = null, long? chatId = null, long? userId = null, string? text = null, bool? disableLinkPreview = null, bool? notify = null, TextFormat? format = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Replies to a message in the specified chat.
@@ -217,6 +217,6 @@ public interface IMessagesApi
     /// <exception cref="Max.Bot.Exceptions.MaxApiException">Thrown when the API returns an error response.</exception>
     /// <exception cref="Max.Bot.Exceptions.MaxNetworkException">Thrown when a network error occurs.</exception>
     /// <exception cref="Max.Bot.Exceptions.MaxUnauthorizedException">Thrown when authentication fails.</exception>
-    Task<Message> ReplyToMessageAsync(long messageId, string text, long? messageChatId = null, long? chatId = null, long? userId = null, bool? disableLinkPreview = null, bool? notify = null, TextFormat? format = null, CancellationToken cancellationToken = default);
+    Task<Message> ReplyToMessageAsync(string messageId, string text, long? messageChatId = null, long? chatId = null, long? userId = null, bool? disableLinkPreview = null, bool? notify = null, TextFormat? format = null, CancellationToken cancellationToken = default);
 }
 

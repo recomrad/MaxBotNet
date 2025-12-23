@@ -352,12 +352,12 @@ internal class MessagesApi : BaseApi, IMessagesApi
     /// <param name="format">The text format (markdown or html).</param>
     /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the sent message.</returns>
-    /// <exception cref="ArgumentException">Thrown when messageId is less than or equal to zero, both chatId and userId are provided, or neither is provided, or when chatId/userId is less than or equal to zero.</exception>
+    /// <exception cref="ArgumentException">Thrown when messageId is null or empty, both chatId and userId are provided, or neither is provided, or when chatId/userId is less than or equal to zero.</exception>
     /// <exception cref="Max.Bot.Exceptions.MaxApiException">Thrown when the API returns an error response.</exception>
     /// <exception cref="Max.Bot.Exceptions.MaxNetworkException">Thrown when a network error occurs.</exception>
     /// <exception cref="Max.Bot.Exceptions.MaxUnauthorizedException">Thrown when authentication fails.</exception>
     public async Task<Message> ForwardMessageAsync(
-        long messageId,
+        string messageId,
         long? messageChatId = null,
         long? chatId = null,
         long? userId = null,
@@ -367,10 +367,7 @@ internal class MessagesApi : BaseApi, IMessagesApi
         TextFormat? format = null,
         CancellationToken cancellationToken = default)
     {
-        if (messageId <= 0)
-        {
-            throw new ArgumentException("Message ID must be greater than zero.", nameof(messageId));
-        }
+        ValidateNotEmpty(messageId, nameof(messageId));
 
         var link = new NewMessageLink
         {
@@ -402,12 +399,12 @@ internal class MessagesApi : BaseApi, IMessagesApi
     /// <param name="format">The text format (markdown or html).</param>
     /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the sent message.</returns>
-    /// <exception cref="ArgumentException">Thrown when messageId is less than or equal to zero, text is null or empty, both chatId and userId are provided, or neither is provided, or when chatId/userId is less than or equal to zero.</exception>
+    /// <exception cref="ArgumentException">Thrown when messageId or text is null or empty, both chatId and userId are provided, or neither is provided, or when chatId/userId is less than or equal to zero.</exception>
     /// <exception cref="Max.Bot.Exceptions.MaxApiException">Thrown when the API returns an error response.</exception>
     /// <exception cref="Max.Bot.Exceptions.MaxNetworkException">Thrown when a network error occurs.</exception>
     /// <exception cref="Max.Bot.Exceptions.MaxUnauthorizedException">Thrown when authentication fails.</exception>
     public async Task<Message> ReplyToMessageAsync(
-        long messageId,
+        string messageId,
         string text,
         long? messageChatId = null,
         long? chatId = null,
@@ -417,11 +414,7 @@ internal class MessagesApi : BaseApi, IMessagesApi
         TextFormat? format = null,
         CancellationToken cancellationToken = default)
     {
-        if (messageId <= 0)
-        {
-            throw new ArgumentException("Message ID must be greater than zero.", nameof(messageId));
-        }
-
+        ValidateNotEmpty(messageId, nameof(messageId));
         ValidateNotEmpty(text, nameof(text));
 
         var link = new NewMessageLink
