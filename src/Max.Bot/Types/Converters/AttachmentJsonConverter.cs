@@ -107,6 +107,9 @@ public class AttachmentJsonConverter : JsonConverter<Attachment>
             case ContactAttachment contactAttachment:
                 JsonSerializer.Serialize(writer, contactAttachment, options);
                 break;
+            case ImageAttachment imageAttachment:
+                JsonSerializer.Serialize(writer, imageAttachment, options);
+                break;
             case InlineKeyboardAttachment inlineKeyboardAttachment:
                 JsonSerializer.Serialize(writer, inlineKeyboardAttachment, options);
                 break;
