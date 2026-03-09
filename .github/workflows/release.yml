@@ -42,6 +42,9 @@ jobs:
         run: dotnet build Max.Bot.sln --configuration Release --no-restore -warnaserror
 
       - name: Test with coverage
+        # Skip tests for alpha releases to allow rapid iteration
+        # Tests still run in CI workflow for validation
+        if: ${{ !contains(github.ref, '-alpha') }}
         run: >
           dotnet test Max.Bot.sln
           --configuration Release
