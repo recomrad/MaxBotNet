@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.5.1-alpha] - 2026-03-09
+
+### Changed
+
+- **Chore**: Добавлен `.pi/` в `.gitignore` для исключения файлов Pi Coding Agent из репозитория.
+
+---
+
+## [0.5.0-alpha] - 2026-03-09
 
 ### Added
 
@@ -179,7 +187,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/NanoAgents/MaxBotNet/compare/v0.4.1-alpha...HEAD
+[Unreleased]: https://github.com/NanoAgents/MaxBotNet/compare/v0.5.1-alpha...HEAD
+[0.5.1-alpha]: https://github.com/NanoAgents/MaxBotNet/compare/v0.5.0-alpha...v0.5.1-alpha
+[0.5.0-alpha]: https://github.com/NanoAgents/MaxBotNet/compare/v0.4.1-alpha...v0.5.0-alpha
 [0.4.1-alpha]: https://github.com/NanoAgents/MaxBotNet/compare/v0.4.0-alpha...v0.4.1-alpha
 [0.4.0-alpha]: https://github.com/NanoAgents/MaxBotNet/compare/v0.3.8-alpha...v0.4.0-alpha
 [0.3.8-alpha]: https://github.com/NanoAgents/MaxBotNet/compare/v0.3.6-alpha...v0.3.8-alpha
